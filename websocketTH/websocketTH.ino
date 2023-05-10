@@ -13,9 +13,15 @@ WebsocketsServer server;
 #define DHTTYPE DHT11     // DHT sensor type
 DHT dht(DHTPIN, DHTTYPE); // Initialize DHT sensor
 
+WebsocketsClient client; // <------------------------------------
+
 void setup() {
+ 
+  // make this a global (declared above) so it doesn't close and reopen every loop <--------------------------
+  client = server.accept();
+
   Serial.begin(9600);
-  dht.begin(); 
+  dht.begin();
   // Connect to wifi
   WiFi.begin(ssid, password);
 
@@ -24,7 +30,7 @@ void setup() {
       Serial.print(".");
       delay(1000);
   }
-  
+ 
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
@@ -36,7 +42,7 @@ void setup() {
 }
 
 void loop() {
-  WebsocketsClient client = server.accept();
+ 
   if(client.available()) {
     WebsocketsMessage msg = client.readBlocking();
 
@@ -47,16 +53,18 @@ void loop() {
   Serial.print(temperature);
   Serial.print(" °C\tHumidity: ");
   Serial.print(humidity);
-
+ 
+    // make a string of the data seperated by commas   <------------------------------------------
+    String data2Send = String(humidity) + "," + String(temperature);
 
     // log
     Serial.print("Got Message: ");
-    Serial.println(msg.data());
+    Serial.println(data2Send);
 
-    // return echo
-    client.send("Echo: " + msg.data());
+    // send that data through <-------------------------------------------
+    client.send(data2Send);
  
   }
-  
+ 
   delay(1000);
 }
