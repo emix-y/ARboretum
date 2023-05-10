@@ -2,8 +2,8 @@
 #include <WiFi.h>
 #include <DHT.h>
 
-const char* ssid = "HUAWEI-E5330-9920";
-const char* password = "14et72by";
+const char* ssid = "";
+const char* password = "";
 
 
 using namespace websockets;
